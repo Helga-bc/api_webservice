@@ -4,7 +4,6 @@ from .models import Book, Author
 
 
 class BookSerializer(ModelSerializer):
-    
         class Meta:
             model = Book
             fields = ['book_id', 'title']
@@ -12,18 +11,18 @@ class BookSerializer(ModelSerializer):
 
 
 class AuthorSerializer(ModelSerializer):
-    books = BookSerializer(many=True)
+    books = BookSerializer(many=True, allow_empty=False)
      
     class Meta:
         model = Author
         fields = ['author_id', 'name', 'books']
         
     def create(self, validated_data):
-        books = validated_data.pop('books')
-        
+        books_data = validated_data.pop('books')
         author = Author.objects.create(**validated_data)
-        author.books.add(*books)
-        
-        print("____________________________")
+        for book_data in books_data:
+            author.books.create(**book_data)
         return author
+    
+    
             

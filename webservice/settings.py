@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_filters',
-    'api'
+    'api',
+    'drf_spectacular'
 ]
 
 MIDDLEWARE = [
@@ -127,7 +128,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
-     'DEFAULT_PARSER_CLASSES': ['rest_framework.parsers.JSONParser']
+     'DEFAULT_PARSER_CLASSES': ['rest_framework.parsers.JSONParser'], 
+     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
 

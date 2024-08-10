@@ -8,8 +8,7 @@ from .serializers import BookSerializer, AuthorSerializer
 
 
 class BookListApiView(GenericAPIView):
-    # add permission to check if user is authenticated
-    #permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     serializer_class = BookSerializer
     queryset = Book.objects.all()
     filter_backends = [filters.SearchFilter]
@@ -19,7 +18,7 @@ class BookListApiView(GenericAPIView):
     #1. List all
     def get(self, request, *args, **kwargs):
         '''
-        List all the book items for given requested user
+        List all books
         '''
 
         title = request.query_params.get("search")
@@ -35,7 +34,7 @@ class BookListApiView(GenericAPIView):
     # 2. Create
     def post(self, request, *args, **kwargs):
         '''
-        Create the Book with given book data
+        Create book
         '''
         data = {
             'title': request.data.get('title')
@@ -51,9 +50,10 @@ class BookListApiView(GenericAPIView):
     # 3. Delete all
     def delete(self, request, *args, **kwargs):
         '''
-        Deletes all books items
+        Deletes all books
         '''
         Book.objects.all().delete()
+        Author.objects.all().delete()
         return Response(
             {"res": "All Objects deleted!"},
             status=status.HTTP_200_OK
@@ -61,13 +61,12 @@ class BookListApiView(GenericAPIView):
 
 
 class BookDetailApiView(APIView):
-    # add permission to check if user is authenticated
-    #permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 
     def get_object(self, book_id):
         '''
-        Helper method to get the object with given book_id
+        Helper method to get book by id
         '''
         try:
             return Book.objects.get(book_id=book_id)
@@ -78,7 +77,7 @@ class BookDetailApiView(APIView):
     # 3. Retrieve
     def get(self, request, book_id, *args, **kwargs):
         '''
-        Retrieves the Book with given book_id
+        Get book by id
         '''
         book_instance = self.get_object(book_id)
         if not book_instance:
@@ -94,7 +93,7 @@ class BookDetailApiView(APIView):
     # 4. Update
     def put(self, request, book_id, *args, **kwargs):
         '''
-        Updates the book item with given book_id if exists
+        Update book by id
         '''
         book_instance = self.get_object(book_id)
         if not book_instance:
@@ -115,7 +114,7 @@ class BookDetailApiView(APIView):
     # 5. Delete
     def delete(self, request, book_id, *args, **kwargs):
         '''
-        Deletes the book item with given book_id if exists
+        Delete book by id
         '''
         book_instance = self.get_object(book_id)
         if not book_instance:
@@ -131,8 +130,8 @@ class BookDetailApiView(APIView):
 
 
 class AuthorListApiView(GenericAPIView):
-    # add permission to check if user is authenticated
-    #permission_classes = [permissions.IsAuthenticated]
+    
+    permission_classes = [permissions.AllowAny]
     serializer_class = AuthorSerializer
     queryset = Author.objects.all()
     filter_backends = [filters.SearchFilter]
@@ -141,7 +140,7 @@ class AuthorListApiView(GenericAPIView):
     # 1. List all
     def get(self, request, *args, **kwargs):
         '''
-        List all the author items
+        List authors
         '''
         name = request.query_params.get("search")
         if name is not None:
@@ -155,16 +154,12 @@ class AuthorListApiView(GenericAPIView):
     # 2. Create
     def post(self, request, *args, **kwargs):
         '''
-        Create the Author with given data
+        Create author
         '''
-        data = {
-            'name': request.data.get('name')
-        }
-        serializer = AuthorSerializer(data=data)
+        serializer = AuthorSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
   
 
@@ -181,13 +176,12 @@ class AuthorListApiView(GenericAPIView):
 
 
 class AuthorDetailApiView(APIView):
-    # add permission to check if user is authenticated
-    #permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 
     def get_object(self, author_id):
         '''
-        Helper method to get the object with given author_id
+        Helper method to get author by id
         '''
         try:
             return Author.objects.get(author_id=author_id)
@@ -197,7 +191,7 @@ class AuthorDetailApiView(APIView):
     # 3. Retrieve
     def get(self, request, author_id, *args, **kwargs):
         '''
-        Retrieves the Author with given author_id
+        Get author by id
         '''
         author_instance = self.get_object(author_id)
         if not author_instance:
@@ -212,7 +206,7 @@ class AuthorDetailApiView(APIView):
     # 4. Update
     def put(self, request, author_id, *args, **kwargs):
         '''
-        Updates the author item with given author_id if exists
+        Update author by id
         '''
         author_instance = self.get_object(author_id)
         if not author_instance:
@@ -233,7 +227,7 @@ class AuthorDetailApiView(APIView):
     # 5. Delete
     def delete(self, request, author_id, *args, **kwargs):
         '''
-        Deletes the author item with given author_id if exists
+        Delete author by id
         '''
         author_instance = self.get_object(author_id)
         if not author_instance:

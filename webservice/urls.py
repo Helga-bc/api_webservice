@@ -17,53 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from api import urls as api_urls
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),
-    path('api/', include(api_urls))
-    
-    
-    
-    
-    
-    # path("api/authors/", AuthorViewSet.as_view(), name ='authors'),
-
-    # path('api/authors/all/<uuid:author_id>/', get_author),
-    
-    # # create_author
-    # # path('api/authors/all/<uuid:author_id>/', get_author), # get author by id
-    # path('api/authors/all/', get_authors), #get all authors
-    # path('api/authors/all/<uuid:author_id>/', update_author), 
-    # path('api/authors/all/<uuid:author_id>/', delete_author),
-    # path('api/authors/all/<str>/', search_authors),
-    
-    
-
-    
-    
-    
-    
-    
-    # должен быть ЮЗЕР???
-    # добавить автора с валидацие автора
-    # получить всех авторов
-    # получить инфу о конкретном авторе
-    # поиск автора по критериям
-    # изменить информацию об авторе по его идентификатору...  Сервис сообщит пользователю, в чём именно его ошибка, при вводе некорректных данных.
-    # удалить автора по идентификатору
-    # удалить всех авторов
-    # добавить книгу с валидацией?
-    # получить инфу обо всех книгах
-    # получить инфу о конкретной книге по идентификатору
-    # поиск книги по критериям
-    # изменить инфу о книге по ее идетнификатору ... Сервис сообщит пользователю, в чём именно его ошибка, при вводе некорректных данных.
-    # удалить книгу по ее идентификатору
-    # удалить все книги
-    
-    # 
-    # 
-    # 
-    # 
+    path('api/', include(api_urls)), 
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='docs'),     
 ]
