@@ -1,36 +1,36 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import permissions
+from rest_framework import status,  permissions, filters
 from .models import Book, Author
 from .serializers import BookSerializer, AuthorSerializer
 
-from django_filters.rest_framework import DjangoFilterBackend
 
-from rest_framework import filters
-from rest_framework.generics import ListAPIView
-
-
-import django_filters 
-from django.db.models import Q
-from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework.permissions import IsAuthenticated
-
-
-
-class BookListApiView(APIView):
+class BookListApiView(GenericAPIView):
     # add permission to check if user is authenticated
     #permission_classes = [permissions.IsAuthenticated]
+    serializer_class = BookSerializer
+    queryset = Book.objects.all()
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['$title']
 
-    # 1. List all
+
+    #1. List all
     def get(self, request, *args, **kwargs):
         '''
         List all the book items for given requested user
         '''
-        books = Book.objects.all()
+
+        title = request.query_params.get("search")
+        if title is not None:
+            books = Book.objects.all().filter(title__iregex=rf"{title}")
+        else:
+            books = Book.objects.all()
+        
         serializer = BookSerializer(books, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     # 2. Create
     def post(self, request, *args, **kwargs):
@@ -46,6 +46,7 @@ class BookListApiView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
     # 3. Delete all
     def delete(self, request, *args, **kwargs):
@@ -63,6 +64,7 @@ class BookDetailApiView(APIView):
     # add permission to check if user is authenticated
     #permission_classes = [permissions.IsAuthenticated]
 
+
     def get_object(self, book_id):
         '''
         Helper method to get the object with given book_id
@@ -71,6 +73,7 @@ class BookDetailApiView(APIView):
             return Book.objects.get(book_id=book_id)
         except Book.DoesNotExist:
             return None
+
 
     # 3. Retrieve
     def get(self, request, book_id, *args, **kwargs):
@@ -86,6 +89,7 @@ class BookDetailApiView(APIView):
 
         serializer = BookSerializer(book_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     # 4. Update
     def put(self, request, book_id, *args, **kwargs):
@@ -107,6 +111,7 @@ class BookDetailApiView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
     # 5. Delete
     def delete(self, request, book_id, *args, **kwargs):
         '''
@@ -125,27 +130,27 @@ class BookDetailApiView(APIView):
         )
 
 
-
-
-class AuthorListApiView(APIView):
+class AuthorListApiView(GenericAPIView):
     # add permission to check if user is authenticated
     #permission_classes = [permissions.IsAuthenticated]
-    
-
-    queryset = Author.objects.all()
     serializer_class = AuthorSerializer
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    # filterset_fields = ['name']
-    search_fields = ['name']
+    queryset = Author.objects.all()
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['$name']
 
     # 1. List all
     def get(self, request, *args, **kwargs):
         '''
         List all the author items
         '''
-        authors = Author.objects.all()
+        name = request.query_params.get("search")
+        if name is not None:
+            authors = Author.objects.all().filter(name__iregex=rf"{name}")
+        else:
+            authors = Author.objects.all()
         serializer = AuthorSerializer(authors, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
 
     # 2. Create
     def post(self, request, *args, **kwargs):
@@ -161,6 +166,7 @@ class AuthorListApiView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+  
 
     # 3. Delete all
     def delete(self, request, *args, **kwargs):
@@ -172,36 +178,12 @@ class AuthorListApiView(APIView):
             {"res": "All Objects deleted!"},
             status=status.HTTP_200_OK
         )
-        
-
-        
-        
-    # def get_queryset(self):
-    #     """
-    #     Optionally returned purchases to a given author,
-    #     """
-    #     queryset = Author.objects.all()
-    #     try:
-    #         name = self.request.query_params['search']
-    #         if name is not None:
-    #             author = queryset.filter(name=name)
-    #             serializer = AuthorSerializer(author, many=True)
-    #             print(serializer.data)
-    #             return Response(serializer.data, status=status.HTTP_200_OK)
-    #     except Exception:
-    #         pass
-    #         return queryset
-
-        
-        
-        
-        
-
 
 
 class AuthorDetailApiView(APIView):
     # add permission to check if user is authenticated
     #permission_classes = [permissions.IsAuthenticated]
+
 
     def get_object(self, author_id):
         '''
@@ -223,10 +205,8 @@ class AuthorDetailApiView(APIView):
                 {"res": "Object with author_id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
         serializer = AuthorSerializer(author_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
 
     # 4. Update
@@ -249,6 +229,7 @@ class AuthorDetailApiView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
     # 5. Delete
     def delete(self, request, author_id, *args, **kwargs):
         '''
@@ -265,31 +246,12 @@ class AuthorDetailApiView(APIView):
             {"res": "Object deleted!"},
             status=status.HTTP_200_OK
         )
-
-
-
-
-
-# class AuthorFilter(django_filters.FilterSet):
-#     name = django_filters.CharFilter(lookup_expr='icontains')
-
-#     class Meta:
-#         model = Author
-#         fields = ['name']
-
-
-# class AuthorListApiView(APIView):
-#     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-#     filterset_class = AuthorFilter
-
-#     def get(self, request, *args, **kwargs):
-#         queryset = Author.objects.all()
-#         filterset = self.filterset_class(request.GET, queryset=queryset)
-#         if filterset.is_valid():
-#             authors = filterset.qs
-#             serializer = AuthorSerializer(authors, many=True)
-#             return Response(serializer.data, status=status.HTTP_200_OK)
-#         else:
-#             return Response(filterset.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+        
+        
+        
+        
+        
+        
+        
+        
+        

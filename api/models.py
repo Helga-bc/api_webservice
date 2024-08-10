@@ -2,10 +2,6 @@ from django.db import models
 import uuid
 
 
-
-
-
-
 class Book(models.Model):
     book_id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     title = models.TextField(unique=True, blank=False, editable=True)
@@ -16,14 +12,12 @@ class Book(models.Model):
     
 
 
-
 class Author(models.Model):
     author_id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     name = models.TextField(unique=True, blank=False, editable=True)
-    books = models.ManyToManyField(Book, blank=False)
+    books = models.ManyToManyField(Book, blank=False, related_name='books')
  
 
-    
     def __str__(self):
         return self.name
 
