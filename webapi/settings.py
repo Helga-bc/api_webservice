@@ -133,3 +133,14 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "webservice api", 
+    "VERSION": "0.0.1",
+    "SERVE_INCLUDE_SCHEMA": False, 
+    "SWAGGER_UI_SETTINGS": {
+        "filter": False, 
+    },
+    "COMPONENT_SPLIT_REQUEST": True
+}
+

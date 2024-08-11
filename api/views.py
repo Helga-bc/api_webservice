@@ -17,7 +17,10 @@ class BookListApiView(GenericAPIView):
     #1. List all
     def get(self, request, *args, **kwargs):
         '''
-        List all books
+        List all books\n
+        For search book by title add query parameter search\n
+        Example: /api/books?search=\<book title\>\n
+        \<book title\> can be part of title or full title (case-insentitive)
         '''
 
         title = request.query_params.get("search")
@@ -132,7 +135,10 @@ class AuthorListApiView(GenericAPIView):
     # 1. List all
     def get(self, request, *args, **kwargs):
         '''
-        List authors
+        List authors\n
+        For search author by name add query parameter search\n
+        Example: /api/authors?search=\<author name\>\n
+        \<author name\> can be part of name or full name (case-insentitive)
         '''
 
         name = request.query_params.get("search")
