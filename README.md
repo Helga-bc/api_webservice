@@ -14,17 +14,17 @@
 
 Действия:
 ```bash
-git clone git@github.com:Helga-bc/api_webservice.git
+git clone https://github.com/Helga-bc/api_webservice.git
 cd api_webservice
 cp docker-compose.yml.sample docker-compose.yml
 cp env.sample .env
-docker-compose build
-docker-compose up -d
+docker compose build
+docker compose up -d
 ```
 Сбросить базу данных:
 ```bash
-docker-compose down -v
-docker-compose up -d
+docker compose down -v
+docker compose up -d
 ```
 
    
@@ -42,8 +42,8 @@ __Админка будет доступна по http://127.0.0.1/admin, пар
 - pip
 
 Действия:
-```bash git clone git@github.com:Helga-bc/api_webservice.git
-git clone git@github.com:Helga-bc/api_webservice.git
+```bash
+git clone https://github.com/Helga-bc/api_webservice.git
 cd api_webservice
 python -m venv venv
 source venv/bin/activate
