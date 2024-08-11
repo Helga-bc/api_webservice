@@ -43,6 +43,7 @@ __Админка будет доступна по http://127.0.0.1/admin, пар
 
 Действия:
 ```bash git clone git@github.com:Helga-bc/api_webservice.git
+git clone git@github.com:Helga-bc/api_webservice.git
 cd api_webservice
 python -m venv venv
 source venv/bin/activate
