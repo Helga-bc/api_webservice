@@ -10,11 +10,11 @@ RUN adduser --shell /bin/bash --gecos '' --disabled-password app
 
 USER app
 
-COPY --chown=app:app ./ /webapi-lesson
+COPY --chown=app:app ./ /api_webservice
 
-VOLUME /webapi-lesson/db
+VOLUME /api_webservice/db
 
-WORKDIR /webapi-lesson
+WORKDIR /api_webservice
 
 RUN pip install --upgrade pip
 RUN python --version && pip --version

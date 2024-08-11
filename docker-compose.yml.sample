@@ -1,6 +1,6 @@
 ---
 services:
-  webapi:
+  api_webservice:
     build:
       context: .
       args:
@@ -11,9 +11,9 @@ services:
     ports:
     - '80:8000'
     volumes:
-    - "webapi_db:/webapi-lesson/db"
-    - ".:/webapi-lesson"
+    - "api_webservice_db:/api_webservice/db"
+    - ".:/api_webservice"
 
 
 volumes:
-  webapi_db:
+  api_webservice_db:
