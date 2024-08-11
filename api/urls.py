@@ -7,8 +7,8 @@ from .views import (
 )
 
 urlpatterns = [
-    path('books/', BookListApiView.as_view()),
+    path('books', BookListApiView.as_view()),
     path('books/<uuid:book_id>/', BookDetailApiView.as_view()),
-    path('authors/', AuthorListApiView.as_view()),
+    path('authors', AuthorListApiView.as_view()),
     path('authors/<uuid:author_id>/', AuthorDetailApiView.as_view())
 ]

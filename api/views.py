@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
-from rest_framework import status,  permissions, filters
+from rest_framework import status, permissions, filters
 from .models import Book, Author
 from .serializers import BookSerializer, AuthorSerializer
 
@@ -13,7 +13,6 @@ class BookListApiView(GenericAPIView):
     queryset = Book.objects.all()
     filter_backends = [filters.SearchFilter]
     search_fields = ['$title']
-
 
     #1. List all
     def get(self, request, *args, **kwargs):
@@ -30,7 +29,6 @@ class BookListApiView(GenericAPIView):
         serializer = BookSerializer(books, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
     # 2. Create
     def post(self, request, *args, **kwargs):
         '''
@@ -46,7 +44,6 @@ class BookListApiView(GenericAPIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
     # 3. Delete all
     def delete(self, request, *args, **kwargs):
         '''
@@ -55,14 +52,13 @@ class BookListApiView(GenericAPIView):
         Book.objects.all().delete()
         Author.objects.all().delete()
         return Response(
-            {"res": "All Objects deleted!"},
+            {"res": "All books deleted!"},
             status=status.HTTP_200_OK
         )
 
 
 class BookDetailApiView(APIView):
     permission_classes = [permissions.AllowAny]
-
 
     def get_object(self, book_id):
         '''
@@ -73,7 +69,6 @@ class BookDetailApiView(APIView):
         except Book.DoesNotExist:
             return None
 
-
     # 3. Retrieve
     def get(self, request, book_id, *args, **kwargs):
         '''
@@ -82,13 +77,12 @@ class BookDetailApiView(APIView):
         book_instance = self.get_object(book_id)
         if not book_instance:
             return Response(
-                {"res": "Object with book id does not exists"},
+                {"res": "Book with specified id does not exist"},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         serializer = BookSerializer(book_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
     # 4. Update
     def put(self, request, book_id, *args, **kwargs):
@@ -98,7 +92,7 @@ class BookDetailApiView(APIView):
         book_instance = self.get_object(book_id)
         if not book_instance:
             return Response(
-                {"res": "Object with book id does not exists"}, 
+                {"res": "Book with specified id does not exist"}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
         data = {
@@ -110,7 +104,6 @@ class BookDetailApiView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
     # 5. Delete
     def delete(self, request, book_id, *args, **kwargs):
         '''
@@ -119,18 +112,17 @@ class BookDetailApiView(APIView):
         book_instance = self.get_object(book_id)
         if not book_instance:
             return Response(
-                {"res": "Object with book id does not exists"}, 
+                {"res": "Book with specified id does not exist"}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
         book_instance.delete()
         return Response(
-            {"res": "Object deleted!"},
+            {"res": "Book deleted!"},
             status=status.HTTP_200_OK
         )
 
 
 class AuthorListApiView(GenericAPIView):
-    
     permission_classes = [permissions.AllowAny]
     serializer_class = AuthorSerializer
     queryset = Author.objects.all()
@@ -142,14 +134,15 @@ class AuthorListApiView(GenericAPIView):
         '''
         List authors
         '''
+
         name = request.query_params.get("search")
         if name is not None:
             authors = Author.objects.all().filter(name__iregex=rf"{name}")
         else:
             authors = Author.objects.all()
+
         serializer = AuthorSerializer(authors, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
     # 2. Create
     def post(self, request, *args, **kwargs):
@@ -160,24 +153,24 @@ class AuthorListApiView(GenericAPIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-  
 
     # 3. Delete all
     def delete(self, request, *args, **kwargs):
         '''
-        Deletes all authors
+        Delete all authors
         '''
         Author.objects.all().delete()
         return Response(
-            {"res": "All Objects deleted!"},
+            {"res": "All authors deleted!"},
             status=status.HTTP_200_OK
         )
 
 
+
 class AuthorDetailApiView(APIView):
     permission_classes = [permissions.AllowAny]
-
 
     def get_object(self, author_id):
         '''
@@ -191,17 +184,17 @@ class AuthorDetailApiView(APIView):
     # 3. Retrieve
     def get(self, request, author_id, *args, **kwargs):
         '''
-        Get author by id
+        Get author by
         '''
         author_instance = self.get_object(author_id)
         if not author_instance:
             return Response(
-                {"res": "Object with author_id does not exists"},
+                {"res": "Author with specified id does not exist"},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
         serializer = AuthorSerializer(author_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
 
     # 4. Update
     def put(self, request, author_id, *args, **kwargs):
@@ -211,7 +204,7 @@ class AuthorDetailApiView(APIView):
         author_instance = self.get_object(author_id)
         if not author_instance:
             return Response(
-                {"res": "Object with author id does not exist"}, 
+                {"res": "Author with specified id does not exist"}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
         data = {
@@ -223,7 +216,6 @@ class AuthorDetailApiView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
     # 5. Delete
     def delete(self, request, author_id, *args, **kwargs):
         '''
@@ -232,20 +224,11 @@ class AuthorDetailApiView(APIView):
         author_instance = self.get_object(author_id)
         if not author_instance:
             return Response(
-                {"res": "Object with author_id does not exists"}, 
+                {"res": "Author with specified id does not exist"}, 
                 status=status.HTTP_400_BAD_REQUEST
             )
         author_instance.delete()
         return Response(
-            {"res": "Object deleted!"},
+            {"res": "Author deleted!"},
             status=status.HTTP_200_OK
         )
-        
-        
-        
-        
-        
-        
-        
-        
-        

@@ -1,0 +1,19 @@
+---
+services:
+  webapi:
+    build:
+      context: .
+      args:
+      - user=$ADMIN_USER
+      - user_email=$ADMIN_USER_EMAIL
+      - user_password=$ADMIN_USER_PASSWORD
+    restart: unless-stopped
+    ports:
+    - '80:8000'
+    volumes:
+    - "webapi_db:/webapi-lesson/db"
+    - ".:/webapi-lesson"
+
+
+volumes:
+  webapi_db:
